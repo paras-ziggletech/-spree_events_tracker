@@ -1,9 +1,11 @@
-Spree::OrdersController.class_eval do
+module Spree::OrdersControllerDecorator
 
   include Spree::CheckoutEventTracker
 
-  after_action :track_return_to_cart, only: :edit, if: :current_order
-  after_action :track_empty_cart_activity, only: :empty
+  def self.prepended(base)
+    base.after_action :track_return_to_cart, only: :edit, if: :current_order
+    base.after_action :track_empty_cart_activity, only: :empty
+  end
 
   private
     def track_empty_cart_activity
@@ -30,3 +32,4 @@ Spree::OrdersController.class_eval do
     end
 
 end
+::Spree::OrdersController.prepend Spree::OrdersControllerDecorator
